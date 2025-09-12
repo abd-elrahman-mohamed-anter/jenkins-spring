@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
-        jdk 'Java17'        // لازم يكون عندك JDK installation باسم Java17
+        jdk 'JDK17'        // لازم يكون عندك JDK installation باسم Java17
     }
 
     stages {
