@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
+        jdk 'Java17'        // لازم يكون عندك JDK installation باسم Java17
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -10,12 +15,11 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'chmod +x mvnw'
                 sh './mvnw clean package -DskipTests'
             }
         }
 
-        stage('Test') {
+        stage('Unit Tests') {
             steps {
                 sh './mvnw test'
             }
@@ -26,11 +30,24 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('SonarQube Analysis') {
             steps {
-                sh 'nohup java -jar target/*.jar --server.port=9999 > app.log 2>&1 &'
+                withSonarQubeEnv('SonarQube-Server') {   // 👈 هنا الاسم الجديد
+                    sh '''
+                        ${tool 'SonarScanner'}/bin/sonar-scanner \
+                          -Dsonar.projectKey=spring-petclinic \
+                          -Dsonar.sources=src \
+                          -Dsonar.java.binaries=target
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy with Docker Compose') {
+            steps {
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d --build'
             }
         }
     }
 }
-
