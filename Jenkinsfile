@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
-        jdk 'JDK17'         // الاسم اللي سجلته في JDK installations
+        jdk 'JDK17'         // الاسم اللي سجلته في Global Tool Config
     }
 
     stages {
@@ -32,7 +32,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     sh """
                         ${tool 'SonarScanner'}/bin/sonar-scanner \
                           -Dsonar.projectKey=spring-petclinic \
