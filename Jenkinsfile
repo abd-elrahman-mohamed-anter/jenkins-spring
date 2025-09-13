@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
-        jdk 'JDK17'        // لازم يكون عندك JDK installation باسم Java17
+        jdk 'JDK17'         // لازم يكون عندك JDK installation باسم JDK17
     }
 
     stages {
@@ -32,11 +32,11 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') {   // 👈 هنا الاسم الجديد
+                withSonarQubeEnv('SonarQube-Server') {   // 👈 اسم الـ SonarQube server اللي سجلته في Jenkins
                     sh '''
-                        ${tool 'SonarScanner'}/bin/sonar-scanner \
+                        ./mvnw sonar:sonar \
                           -Dsonar.projectKey=spring-petclinic \
-                          -Dsonar.sources=src \
+                          -Dsonar.projectName="Spring PetClinic" \
                           -Dsonar.java.binaries=target
                     '''
                 }
