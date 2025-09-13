@@ -3,7 +3,12 @@ pipeline {
 
     tools {
         maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
-        jdk 'JDK17'         // لازم يكون عندك JDK installation باسم JDK17
+        jdk 'JDK17'         // الاسم اللي سجلته في Global Tool Config
+    }
+
+    environment {
+        // SONAR_AUTH_TOKEN ده اسم الـ Credential اللي خزّنته في Jenkins
+        SONAR_AUTH_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -32,13 +37,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') {   // 👈 اسم الـ SonarQube server اللي سجلته في Jenkins
-                    sh '''
-                        ./mvnw sonar:sonar \
-                          -Dsonar.projectKey=spring-petclinic \
-                          -Dsonar.projectName="Spring PetClinic" \
-                          -Dsonar.java.binaries=target
-                    '''
+                withSonarQubeEnv('SonarQube-Server') {   // الاسم في Configure System
+                    sh "./mvnw sonar:sonar -Dsonar.login=${SONAR_AUTH_TOKEN}"
                 }
             }
         }
