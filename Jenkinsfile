@@ -2,8 +2,12 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'       // الاسم اللي سجلته في Jenkins Global Tool Config
-        jdk 'JDK17'         // الاسم اللي سجلته في Jenkins Global Tool Config
+        maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
+        jdk 'JDK17'         // الاسم اللي سجلته في Global Tool Config
+    }
+
+    environment {
+        DOCKER_COMPOSE_DIR = "${WORKSPACE}"  // لو حابب تحدد مكان docker-compose.yml
     }
 
     stages {
@@ -32,10 +36,12 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'sonar-token1', variable: 'SONAR_TOKEN')]) {
                     sh """
-                        ${tool 'Maven'}/bin/mvn clean verify sonar:sonar \
+                        mvn sonar:sonar \
                           -Dsonar.projectKey=spring-petclinic \
+                          -Dsonar.sources=src \
+                          -Dsonar.java.binaries=target \
                           -Dsonar.host.url=http://localhost:9000 \
                           -Dsonar.login=$SONAR_TOKEN
                     """
@@ -45,21 +51,20 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                sh 'docker-compose down || true'
-                sh 'docker-compose up -d --build'
+                dir("${DOCKER_COMPOSE_DIR}") {
+                    sh 'docker-compose down || true'
+                    sh 'docker-compose up -d --build'
+                }
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline finished.'
+        failure {
+            echo "Pipeline failed. Check the logs above for errors."
         }
         success {
-            echo 'Build and deployment succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed. Check the logs above.'
+            echo "Pipeline completed successfully!"
         }
     }
 }
