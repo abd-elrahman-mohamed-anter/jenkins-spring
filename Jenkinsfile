@@ -40,7 +40,8 @@ pipeline {
                     sh """
                         mvn sonar:sonar \
                           -Dsonar.projectKey=spring-petclinic \
-                          -Dsonar.sources=src \
+                          -Dsonar.sources=src/main/java \
+                          -Dsonar.tests=src/test/java \
                           -Dsonar.java.binaries=target \
                           -Dsonar.host.url=http://localhost:9000 \
                           -Dsonar.login=$SONAR_TOKEN
@@ -52,8 +53,9 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 dir("${DOCKER_COMPOSE_DIR}") {
-                    sh 'docker-compose down || true'
-                    sh 'docker-compose up -d --build'
+                    // استخدم Docker Compose V2
+                    sh 'docker compose down || true'
+                    sh 'docker compose up -d --build'
                 }
             }
         }
