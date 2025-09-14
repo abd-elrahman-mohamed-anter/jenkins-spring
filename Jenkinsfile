@@ -34,19 +34,22 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 script {
-                    // أخذ أول JAR غير original
+                    // مسك أول jar مش original
                     def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1", returnStdout: true).trim()
-                    echo "Found JAR: ${jarFile}, checking Nexus repository..."
+                    // جِب الـ version من pom.xml
+                    def projectVersion = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+                    
+                    echo "Found JAR: ${jarFile}"
+                    echo "Project Version: ${projectVersion}"
 
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                      usernameVariable: 'NEXUS_USER',
                                                      passwordVariable: 'NEXUS_PASS')]) {
-                        // استخدام triple quotes لتجنب مشاكل Groovy String interpolation
                         sh """
                             mvn deploy:deploy-file \
                               -DgroupId=com.example \
                               -DartifactId=petclinic \
-                              -Dversion=1.0.0 \
+                              -Dversion=${projectVersion} \
                               -Dpackaging=jar \
                               -Dfile=${jarFile} \
                               -DrepositoryId=nexus \
