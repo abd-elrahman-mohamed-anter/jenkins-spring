@@ -2,66 +2,54 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'       // الاسم اللي سجلته في Global Tool Config
-        jdk 'JDK17'         // الاسم اللي سجلته في Global Tool Config
+        maven "Maven3"   // اتأكد انك ضايف Maven باسم Maven3 من Global Tool Configuration
+        jdk "JDK17"      // نفس الفكرة JDK17
     }
 
     environment {
-        DOCKER_COMPOSE_DIR = "${WORKSPACE}"  // مكان docker-compose.yml
+        SONARQUBE = "SonarQube-Server"   // الاسم اللي سجلته في SonarQube installations
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/abd-elrahman-mohamed-anter/spring-petclinic-fork'
             }
         }
 
         stage('Build') {
             steps {
-                // نعمل Skip للاختبارات في الـ Build
-                sh './mvnw clean package -DskipTests -Dmaven.test.failure.ignore=true'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Start PostgreSQL') {
+        stage('SonarQube Analysis') {
             steps {
-                dir("${DOCKER_COMPOSE_DIR}") {
-                    sh 'docker compose up -d postgres'
-                }
-                // ندي PostgreSQL وقت يجهز
-                sh 'sleep 15'
-            }
-        }
-
-        stage('Unit Tests') {
-            steps {
-                // || true عشان الـ Pipeline يكمل حتى لو حصل Fail
-                sh './mvnw test || true'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
 
-        stage('Deploy All Services') {
+        stage('Upload to Nexus') {
             steps {
-                dir("${DOCKER_COMPOSE_DIR}") {
-                    // نشغل بقية الخدمات (PetClinic + Prometheus + Grafana + SonarQube)
-                    sh 'docker compose up -d --build'
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
+                                                 usernameVariable: 'NEXUS_USER',
+                                                 passwordVariable: 'NEXUS_PASS')]) {
+                    sh """
+                        mvn deploy:deploy-file \
+                          -DgroupId=com.example \
+                          -DartifactId=petclinic \
+                          -Dversion=1.0.0 \
+                          -Dpackaging=jar \
+                          -Dfile=target/spring-petclinic-3.2.0-SNAPSHOT.jar \
+                          -DrepositoryId=nexus \
+                          -Durl=http://localhost:8081/repository/maven-releases/ \
+                          -Dusername=$NEXUS_USER \
+                          -Dpassword=$NEXUS_PASS
+                    """
                 }
             }
-        }
-    }
-
-    post {
-        failure {
-            echo "Pipeline failed. Check the logs above for errors."
-        }
-        success {
-            echo "Pipeline completed successfully!"
         }
     }
 }
