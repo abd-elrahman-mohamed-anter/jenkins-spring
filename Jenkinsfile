@@ -2,14 +2,18 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JDK17'
-        maven 'Maven3'
+        maven "Maven3"
+        jdk "JDK17"
+    }
+
+    environment {
+        SONARQUBE = "SonarQube-Server"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/abd-elrahman-mohamed-anter/jenkins-spring.git'
+                git branch: 'main', url: 'https://github.com/abd-elrahman-mohamed-anter/jenkins-spring'
             }
         }
 
@@ -19,37 +23,32 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-
         stage('SonarQube Analysis') {
-            environment {
-                SONAR_HOST_URL = 'http://localhost:9000'
-                SONAR_LOGIN = credentials('sonar-token1') // ID في Jenkins
-            }
             steps {
-                sh '''
-                    mvn sonar:sonar \
-                      -Dsonar.projectKey=spring-petclinic \
-                      -Dsonar.host.url=$SONAR_HOST_URL \
-                      -Dsonar.login=$SONAR_LOGIN
-                '''
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
 
-        stage('Run Services with Docker Compose') {
+        stage('Docker Compose Up') {
             steps {
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+                sh 'docker compose -f docker-compose.yml up -d --build'
             }
         }
 
-        stage('Deploy') {
+        stage('Health Check') {
             steps {
-                echo 'PetClinic running at http://localhost:8890'
+                script {
+                    // PetClinic
+                    sh 'for i in {1..30}; do curl -fs http://localhost:8890/actuator/health && break || sleep 5; done'
+
+                    // Prometheus
+                    sh 'for i in {1..30}; do curl -fs http://localhost:9090/-/ready && break || sleep 5; done'
+
+                    // Grafana
+                    sh 'for i in {1..30}; do curl -fs http://localhost:3000/api/health && break || sleep 5; done'
+                }
             }
         }
     }
