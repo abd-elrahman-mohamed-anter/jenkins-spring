@@ -6,10 +6,6 @@ pipeline {
         jdk "JDK17"
     }
 
-    environment {
-        SONARQUBE = "SonarQube-Server"
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -23,30 +19,41 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Test') {
             steps {
-                withSonarQubeEnv('SonarQube-Server') {
-                    sh 'mvn sonar:sonar'
+                sh 'mvn test'
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                script {
+                    echo "🩺 Checking Spring Boot Health Endpoint..."
+                    sh """
+                        STATUS=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/health || true)
+                        if [ "\$STATUS" != "200" ]; then
+                          echo "❌ Health endpoint is not OK!"
+                          exit 1
+                        else
+                          echo "✅ Health endpoint is healthy"
+                        fi
+                    """
                 }
             }
         }
 
-        stage('Upload to Nexus') {
+        stage('Observability Check') {
             steps {
                 script {
-                    // يجيب أول JAR مش original
-                    def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1", returnStdout: true).trim()
-                    echo "Found JAR: ${jarFile}, uploading to Nexus..."
-
+                    echo "🔍 Checking Prometheus metrics endpoint..."
                     sh """
-                        mvn deploy:deploy-file \
-                          -DgroupId=com.example \
-                          -DartifactId=petclinic \
-                          -Dversion=3.5.0 \
-                          -Dpackaging=jar \
-                          -Dfile=${jarFile} \
-                          -DrepositoryId=maven-releases1 \
-                          -Durl=http://localhost:8081/repository/maven-releases1/
+                        STATUS=\$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/actuator/prometheus || true)
+                        if [ "\$STATUS" != "200" ]; then
+                          echo "❌ Prometheus endpoint not available!"
+                          exit 1
+                        else
+                          echo "✅ Prometheus endpoint is healthy"
+                        fi
                     """
                 }
             }
