@@ -34,30 +34,27 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 script {
-                    // ياخد أول JAR اتبني في target/ (مش النسخة original)
-                    def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1 || true", returnStdout: true).trim()
+                    // ياخد أول JAR اتبني في target/ بدون original
+                    def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1", returnStdout: true).trim()
+                    echo "Found JAR: ${jarFile}, ready to upload to Nexus..."
 
-                    if (!jarFile) {
-                        error "No JAR file found in target/ directory. Skipping Nexus upload."
-                    }
-
-                    echo "Found JAR: ${jarFile}, uploading to Nexus..."
-
+                    // استخدم credentials مخزنة في Jenkins
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                      usernameVariable: 'NEXUS_USER',
                                                      passwordVariable: 'NEXUS_PASS')]) {
-                        sh """
-                            mvn deploy:deploy-file \
-                              -DgroupId=com.example \
-                              -DartifactId=petclinic \
-                              -Dversion=1.0.0 \
-                              -Dpackaging=jar \
-                              -Dfile=${jarFile} \
-                              -DrepositoryId=nexus \
-                              -Durl=http://localhost:8081/repository/maven-releases1/ \
-                              -Dusername=\\\$NEXUS_USER \
-                              -Dpassword=\\\$NEXUS_PASS
-                        """
+                        // استخدم list syntax لتجنب مشاكل Groovy string interpolation
+                        sh([
+                            'mvn', 'deploy:deploy-file',
+                            "-DgroupId=com.example",
+                            "-DartifactId=petclinic",
+                            "-Dversion=1.0.0",
+                            "-Dpackaging=jar",
+                            "-Dfile=${jarFile}",
+                            "-DrepositoryId=nexus",
+                            "-Durl=http://localhost:8081/repository/maven-releases1/",
+                            "-Dusername=${NEXUS_USER}",
+                            "-Dpassword=${NEXUS_PASS}"
+                        ])
                     }
                 }
             }
