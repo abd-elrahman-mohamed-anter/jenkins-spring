@@ -41,24 +41,11 @@ pipeline {
                         error "No JAR file found in target/ directory. Skipping Nexus upload."
                     }
 
-                    echo "Found JAR: ${jarFile}, checking Nexus repository..."
+                    echo "Found JAR: ${jarFile}, uploading to Nexus..."
 
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                      usernameVariable: 'NEXUS_USER',
                                                      passwordVariable: 'NEXUS_PASS')]) {
-
-                        // تحقق من وجود الـ repository
-                        def repoExists = sh(script: """
-                            curl -s -u $NEXUS_USER:$NEXUS_PASS -o /dev/null -w "%{http_code}" \
-                            http://localhost:8081/repository/maven-releases1/
-                        """, returnStdout: true).trim()
-
-                        if (repoExists != "200") {
-                            error "Nexus repository 'maven-releases1' not found or not accessible."
-                        }
-
-                        echo "Repository exists, uploading JAR..."
-
                         sh """
                             mvn deploy:deploy-file \
                               -DgroupId=com.example \
@@ -68,8 +55,8 @@ pipeline {
                               -Dfile=${jarFile} \
                               -DrepositoryId=nexus \
                               -Durl=http://localhost:8081/repository/maven-releases1/ \
-                              -Dusername=$NEXUS_USER \
-                              -Dpassword=$NEXUS_PASS
+                              -Dusername=\\\$NEXUS_USER \
+                              -Dpassword=\\\$NEXUS_PASS
                         """
                     }
                 }
