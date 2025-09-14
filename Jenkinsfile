@@ -34,27 +34,26 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 script {
-                    // ياخد أول JAR اتبني في target/ بدون original
+                    // أخذ أول JAR غير original
                     def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1", returnStdout: true).trim()
-                    echo "Found JAR: ${jarFile}, ready to upload to Nexus..."
+                    echo "Found JAR: ${jarFile}, checking Nexus repository..."
 
-                    // استخدم credentials مخزنة في Jenkins
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                      usernameVariable: 'NEXUS_USER',
                                                      passwordVariable: 'NEXUS_PASS')]) {
-                        // استخدم list syntax لتجنب مشاكل Groovy string interpolation
-                        sh([
-                            'mvn', 'deploy:deploy-file',
-                            "-DgroupId=com.example",
-                            "-DartifactId=petclinic",
-                            "-Dversion=1.0.0",
-                            "-Dpackaging=jar",
-                            "-Dfile=${jarFile}",
-                            "-DrepositoryId=nexus",
-                            "-Durl=http://localhost:8081/repository/maven-releases1/",
-                            "-Dusername=${NEXUS_USER}",
-                            "-Dpassword=${NEXUS_PASS}"
-                        ])
+                        // استخدام triple quotes لتجنب مشاكل Groovy String interpolation
+                        sh """
+                            mvn deploy:deploy-file \
+                              -DgroupId=com.example \
+                              -DartifactId=petclinic \
+                              -Dversion=1.0.0 \
+                              -Dpackaging=jar \
+                              -Dfile=${jarFile} \
+                              -DrepositoryId=nexus \
+                              -Durl=http://localhost:8081/repository/maven-releases1/ \
+                              -Dusername=$NEXUS_USER \
+                              -Dpassword=$NEXUS_PASS
+                        """
                     }
                 }
             }
