@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     tools {
-        maven "Maven3"   // اتأكد انك ضايف Maven باسم Maven3 من Global Tool Configuration
-        jdk "JDK17"      // نفس الفكرة JDK17
+        maven "Maven3"
+        jdk "JDK17"
     }
 
     environment {
-        SONARQUBE = "SonarQube-Server"   // الاسم اللي سجلته في SonarQube installations
+        SONARQUBE = "SonarQube-Server"
     }
 
     stages {
@@ -33,21 +33,26 @@ pipeline {
 
         stage('Upload to Nexus') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
-                                                 usernameVariable: 'NEXUS_USER',
-                                                 passwordVariable: 'NEXUS_PASS')]) {
-                    sh """
-                        mvn deploy:deploy-file \
-                          -DgroupId=com.example \
-                          -DartifactId=petclinic \
-                          -Dversion=1.0.0 \
-                          -Dpackaging=jar \
-                          -Dfile=target/spring-petclinic-3.2.0-SNAPSHOT.jar \
-                          -DrepositoryId=nexus \
-                          -Durl=http://localhost:8081/repository/maven-releases/ \
-                          -Dusername=$NEXUS_USER \
-                          -Dpassword=$NEXUS_PASS
-                    """
+                script {
+                    // ياخد أول JAR اتبني في target/ (مش النسخة original)
+                    def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1", returnStdout: true).trim()
+
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
+                                                     usernameVariable: 'NEXUS_USER',
+                                                     passwordVariable: 'NEXUS_PASS')]) {
+                        sh """
+                            mvn deploy:deploy-file \
+                              -DgroupId=com.example \
+                              -DartifactId=petclinic \
+                              -Dversion=1.0.0 \
+                              -Dpackaging=jar \
+                              -Dfile=${jarFile} \
+                              -DrepositoryId=nexus \
+                              -Durl=http://localhost:8081/repository/maven-releases/ \
+                              -Dusername=$NEXUS_USER \
+                              -Dpassword=$NEXUS_PASS
+                        """
+                    }
                 }
             }
         }
