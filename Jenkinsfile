@@ -35,11 +35,30 @@ pipeline {
             steps {
                 script {
                     // ياخد أول JAR اتبني في target/ (مش النسخة original)
-                    def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1", returnStdout: true).trim()
+                    def jarFile = sh(script: "ls target/*.jar | grep -v original | head -n 1 || true", returnStdout: true).trim()
+
+                    if (!jarFile) {
+                        error "No JAR file found in target/ directory. Skipping Nexus upload."
+                    }
+
+                    echo "Found JAR: ${jarFile}, checking Nexus repository..."
 
                     withCredentials([usernamePassword(credentialsId: 'nexus-credentials',
                                                      usernameVariable: 'NEXUS_USER',
                                                      passwordVariable: 'NEXUS_PASS')]) {
+
+                        // تحقق من وجود الـ repository
+                        def repoExists = sh(script: """
+                            curl -s -u $NEXUS_USER:$NEXUS_PASS -o /dev/null -w "%{http_code}" \
+                            http://localhost:8081/repository/maven-releases1/
+                        """, returnStdout: true).trim()
+
+                        if (repoExists != "200") {
+                            error "Nexus repository 'maven-releases1' not found or not accessible."
+                        }
+
+                        echo "Repository exists, uploading JAR..."
+
                         sh """
                             mvn deploy:deploy-file \
                               -DgroupId=com.example \
