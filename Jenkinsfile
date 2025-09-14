@@ -48,7 +48,7 @@ pipeline {
                               -Dpackaging=jar \
                               -Dfile=${jarFile} \
                               -DrepositoryId=nexus \
-                              -Durl=http://localhost:8081/repository/maven-releases/ \
+                              -Durl=http://localhost:8081/repository/maven-releases1/ \
                               -Dusername=$NEXUS_USER \
                               -Dpassword=$NEXUS_PASS
                         """
