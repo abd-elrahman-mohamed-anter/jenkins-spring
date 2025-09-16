@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOCKER_HUB_REPO: abd-elrahman-mohamed-anter/jenkins-spring
+      DOCKER_HUB_REPO: abdoomohamed/jenkins-spring
 
     steps:
       # 1️⃣ تحميل الكود
