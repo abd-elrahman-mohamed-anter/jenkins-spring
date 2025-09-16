@@ -91,7 +91,7 @@ The Docker image was successfully pushed to Docker Hub:
 
 👉 [`abdoomohamed/jenkins-spring`](https://hub.docker.com/repository/docker/abdoomohamed/jenkins-spring)  
 
-![DockerHub Repository](/dockerhup.jpg)
+![DockerHub Repository](dockerhup.png)
 
 ---
 
