@@ -15,22 +15,7 @@ The pipeline triggers on:
 - Pushes to the **`main`** branch  
 - Pull requests  
 
----
 
-## 🔐 Repository Secrets
-
-This project uses GitHub Actions to automate CI/CD. To securely connect with external services, the following **repository secrets** are configured:
-
-| Name              | Description |
-|------------------|-------------|
-| `DOCKER_USERNAME` | Docker Hub username |
-| `DOCKER_PASSWORD` | Docker Hub access token with read & write permissions |
-| `SONAR_TOKEN`     | SonarCloud token used to authenticate and analyze the project |
-| `SONAR_HOST_URL`  | URL of the SonarCloud server (`https://sonarcloud.io`) |
-
-> **Note:** Secrets are stored in GitHub repository settings under **Settings → Secrets and variables → Actions** and are **not visible in the repository or logs**.
-### screen shot 
-![Show the secrets](4.png)
 ---
 
 ## 📷 Screenshots
@@ -44,6 +29,10 @@ Successful runs of the CI/CD pipeline:
 
 ### 2️⃣ Workflow Job Details  
 Each step of the job (`build-analyze-deploy`) runs successfully:  
+
+
+![Workflow Steps](2.png)
+
 
 It contains a single job called **`build-analyze-deploy`** which executes the following steps:
 
@@ -71,8 +60,6 @@ It contains a single job called **`build-analyze-deploy`** which executes the fo
 8. **Push Docker Image**  
    Publishes the Docker image to the configured Docker Hub repository.
  
-
-![Workflow Steps](2.png)
 
 ---
 
@@ -107,6 +94,23 @@ The Docker image was successfully pushed to Docker Hub:
 👉 [`abdoomohamed/jenkins-spring`](https://hub.docker.com/repository/docker/abdoomohamed/jenkins-spring)  
 
 ![DockerHub Repository](dockerhup.png)
+
+
+## 🔐 Repository Secrets
+
+This project uses GitHub Actions to automate CI/CD. To securely connect with external services, the following **repository secrets** are configured:
+
+| Name              | Description |
+|------------------|-------------|
+| `DOCKER_USERNAME` | Docker Hub username |
+| `DOCKER_PASSWORD` | Docker Hub access token with read & write permissions |
+| `SONAR_TOKEN`     | SonarCloud token used to authenticate and analyze the project |
+| `SONAR_HOST_URL`  | URL of the SonarCloud server (`https://sonarcloud.io`) |
+
+> **Note:** Secrets are stored in GitHub repository settings under **Settings → Secrets and variables → Actions** and are **not visible in the repository or logs**.
+### screen shot 
+
+![Show the secrets](4.png)
 
 ---
 
