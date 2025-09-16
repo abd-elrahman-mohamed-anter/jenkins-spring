@@ -56,7 +56,8 @@ This project uses GitHub Actions to automate CI/CD. To securely connect with ext
 | `SONAR_HOST_URL`  | URL of the SonarCloud server (`https://sonarcloud.io`) |
 
 > **Note:** Secrets are stored in GitHub repository settings under **Settings → Secrets and variables → Actions** and are **not visible in the repository or logs**.
-
+### screen shot 
+![Show the secrets](4.png)
 ---
 
 ## 📷 Screenshots
