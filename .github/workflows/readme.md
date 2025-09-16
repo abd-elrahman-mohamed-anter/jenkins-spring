@@ -15,16 +15,32 @@ The pipeline triggers on:
 - Pushes to the **`main`** branch  
 - Pull requests  
 
-It contains a job `build-analyze-deploy` that performs the following steps:  
+It contains a single job called **`build-analyze-deploy`** which executes the following steps:
 
-1. **Checkout Code** → Pulls the source code from GitHub.  
-2. **Set up Java** → Installs JDK 17 (Temurin).  
-3. **Cache Maven Packages** → Speeds up builds by caching dependencies.  
-4. **Build Project** → Compiles and packages the application.  
-5. **Run SonarCloud Analysis** → Checks code quality and security.  
-6. **Log in to Docker Hub** → Authenticates using GitHub Secrets.  
-7. **Build Docker Image** → Builds the app image with Docker.  
-8. **Push Docker Image** → Publishes the image to Docker Hub.  
+1. **Checkout Code**  
+   Pulls the source code from the GitHub repository.
+
+2. **Set up Java**  
+   Installs **JDK 17 (Temurin)** to provide the required Java environment.
+
+3. **Cache Maven Packages**  
+   Speeds up build times by caching project dependencies.
+
+4. **Build Project**  
+   Compiles and packages the application using Maven.
+
+5. **Run SonarCloud Analysis**  
+   Analyzes code quality, security, and maintainability using SonarCloud.
+
+6. **Log in to Docker Hub**  
+   Authenticates with Docker Hub using GitHub repository secrets.
+
+7. **Build Docker Image**  
+   Builds a Docker image of the application.
+
+8. **Push Docker Image**  
+   Publishes the Docker image to the configured Docker Hub repository.
+ 
 
 ---
 
