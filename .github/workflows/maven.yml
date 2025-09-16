@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build-analyze-deploy:
+   build-analyze-deploy:
     runs-on: ubuntu-latest
 
     env:
