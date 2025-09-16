@@ -98,3 +98,10 @@ docker pull abdoomohamed/jenkins-spring:latest
 
 # Run the container
 docker run -p 8080:8080 abdoomohamed/jenkins-spring:latest
+```
+## 📚 References
+- [SonarCloud Docs](https://docs.sonarcloud.io/)
+- [GitHub Actions Docs](https://docs.github.com/en/actions)
+- [Docker Hub Docs](https://docs.docker.com/docker-hub/)
+
+
