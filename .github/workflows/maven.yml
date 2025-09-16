@@ -61,3 +61,12 @@ jobs:
       #  رفع  image
       - name: Push Docker image
         run: docker push $DOCKER_HUB_REPO:latest
+     
+      #- name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+ 
