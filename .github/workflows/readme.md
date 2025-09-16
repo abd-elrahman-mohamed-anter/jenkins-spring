@@ -78,15 +78,15 @@ Each step of the job (`build-analyze-deploy`) runs successfully:
 
 ### 4️⃣ SonarCloud Analysis Results  
 The project passed the **Quality Gate** with ratings:    
-### 📊 SonarCloud Quality Metrics
 
 | Metric               | Value  | Rating |
 |---------------------|-------|--------|
 | Security             | 0     | A      |
-| Reliability          | 38    | C      |
-| Maintainability      | 103   | A      |
+| Reliability          | 0     | A      |
+| Maintainability      | 28    | A      |
 | Hotspots Reviewed    | 100%  | A      |
 | Duplications         | 0.0%  | A      |
+
 
 
 ![SonarCloud Results](sonarcloud1.png)
