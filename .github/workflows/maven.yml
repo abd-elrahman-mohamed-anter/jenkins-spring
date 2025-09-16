@@ -6,25 +6,25 @@ on:
   pull_request:
 
 jobs:
-   build-analyze-deploy:
+  build-analyze-deploy:
     runs-on: ubuntu-latest
 
     env:
       DOCKER_HUB_REPO: abdoomohamed/jenkins-spring
-    
+
     steps:
-      #  تحميل الكود
+      # تحميل الكود
       - name: Checkout code
         uses: actions/checkout@v3
 
-      #  إعداد Java
+      # إعداد Java
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: temurin
 
-      #  Cache لمكتبات Maven
+      # Cache لمكتبات Maven
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -33,11 +33,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      #  Build بالميفن
+      # Build بالميفن
       - name: Build project
         run: mvn clean package -DskipTests
 
-      #  تحليل الكود بـ SonarCloud
+      # تحليل الكود بـ SonarCloud
       - name: Run SonarCloud analysis
         run: |
           mvn sonar:sonar \
@@ -45,7 +45,6 @@ jobs:
             -Dsonar.organization=abd-elrahman-mohamed-anter \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
 
       # تسجيل الدخول في Docker Hub
       - name: Log in to Docker Hub
@@ -58,17 +57,18 @@ jobs:
       - name: Build Docker image
         run: docker build -t $DOCKER_HUB_REPO:latest .
 
-      #  رفع  image
+      # رفع image
       - name: Push Docker image
         run: docker push $DOCKER_HUB_REPO:latest
-     
-      #- name: Slack Notification
-     - name: Send Slack notification
-      uses: 8398a7/action-slack@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        status: ${{ job.status }}
-       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # Slack Notification
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
 
  
