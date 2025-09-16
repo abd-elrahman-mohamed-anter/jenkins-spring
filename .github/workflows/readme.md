@@ -63,7 +63,7 @@ It contains a single job called **`build-analyze-deploy`** which executes the fo
 
 ---
 
-### 4️⃣ SonarCloud Analysis Results  
+### 3️⃣ SonarCloud Analysis Results  
 The project passed the **Quality Gate** with ratings:    
 
 | Metric               | Value  | Rating |
@@ -88,7 +88,7 @@ The project passed the **Quality Gate** with ratings:
 
 ---
 
-### 5️⃣ Docker Hub Repository  
+### 4️⃣ Docker Hub Repository  
 The Docker image was successfully pushed to Docker Hub:  
 
 👉 [`abdoomohamed/jenkins-spring`](https://hub.docker.com/repository/docker/abdoomohamed/jenkins-spring)  
