@@ -89,7 +89,7 @@ The project passed the **Quality Gate** with ratings:
 | Duplications         | 0.0%  | A      |
 
 
-![SonarCloud Results](sonarcloud.png)
+![SonarCloud Results](sonarcloud1.png)
 
 ---
 
