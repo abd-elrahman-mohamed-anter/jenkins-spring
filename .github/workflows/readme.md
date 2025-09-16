@@ -33,21 +33,14 @@ It contains a job `build-analyze-deploy` that performs the following steps:
 ### 1️⃣ GitHub Actions Workflow  
 Successful runs of the CI/CD pipeline:  
 
-![GitHub Actions Workflow](screenshots/1.jpg)
+![GitHub Actions Workflow](1.jpg)
 
 ---
 
 ### 2️⃣ Workflow Job Details  
 Each step of the job (`build-analyze-deploy`) runs successfully:  
 
-![Workflow Steps](screenshots/2.png)
-
----
-
-### 3️⃣ Build and Cache Logs  
-Example logs showing successful checkout and dependency caching:  
-
-![Build Logs](screenshots/3.png)
+![Workflow Steps](2.png)
 
 ---
 
@@ -57,7 +50,7 @@ The project passed the **Quality Gate** with ratings:
 - Maintainability: **A**  
 - Security: **A**  
 
-![SonarCloud Results](screenshots/sonarcloud.png)
+![SonarCloud Results](sonarcloud.png)
 
 ---
 
@@ -66,7 +59,7 @@ The Docker image was successfully pushed to Docker Hub:
 
 👉 [`abdoomohamed/jenkins-spring`](https://hub.docker.com/repository/docker/abdoomohamed/jenkins-spring)  
 
-![DockerHub Repository](screenshots/dockerhup.jpg)
+![DockerHub Repository](/dockerhup.jpg)
 
 ---
 
