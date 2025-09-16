@@ -15,33 +15,6 @@ The pipeline triggers on:
 - Pushes to the **`main`** branch  
 - Pull requests  
 
-It contains a single job called **`build-analyze-deploy`** which executes the following steps:
-
-1. **Checkout Code**  
-   Pulls the source code from the GitHub repository.
-
-2. **Set up Java**  
-   Installs **JDK 17 (Temurin)** to provide the required Java environment.
-
-3. **Cache Maven Packages**  
-   Speeds up build times by caching project dependencies.
-
-4. **Build Project**  
-   Compiles and packages the application using Maven.
-
-5. **Run SonarCloud Analysis**  
-   Analyzes code quality, security, and maintainability using SonarCloud.
-
-6. **Log in to Docker Hub**  
-   Authenticates with Docker Hub using GitHub repository secrets.
-
-7. **Build Docker Image**  
-   Builds a Docker image of the application.
-
-8. **Push Docker Image**  
-   Publishes the Docker image to the configured Docker Hub repository.
- 
-
 ---
 
 ## 🔐 Repository Secrets
@@ -71,6 +44,33 @@ Successful runs of the CI/CD pipeline:
 
 ### 2️⃣ Workflow Job Details  
 Each step of the job (`build-analyze-deploy`) runs successfully:  
+
+It contains a single job called **`build-analyze-deploy`** which executes the following steps:
+
+1. **Checkout Code**  
+   Pulls the source code from the GitHub repository.
+
+2. **Set up Java**  
+   Installs **JDK 17 (Temurin)** to provide the required Java environment.
+
+3. **Cache Maven Packages**  
+   Speeds up build times by caching project dependencies.
+
+4. **Build Project**  
+   Compiles and packages the application using Maven.
+
+5. **Run SonarCloud Analysis**  
+   Analyzes code quality, security, and maintainability using SonarCloud.
+
+6. **Log in to Docker Hub**  
+   Authenticates with Docker Hub using GitHub repository secrets.
+
+7. **Build Docker Image**  
+   Builds a Docker image of the application.
+
+8. **Push Docker Image**  
+   Publishes the Docker image to the configured Docker Hub repository.
+ 
 
 ![Workflow Steps](2.png)
 
