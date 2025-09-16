@@ -11,6 +11,7 @@ jobs:
 
     env:
       DOCKER_HUB_REPO: abdoomohamed/jenkins-spring
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
     steps:
       #  تحميل الكود
@@ -63,10 +64,11 @@ jobs:
         run: docker push $DOCKER_HUB_REPO:latest
      
       #- name: Slack Notification
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+     - name: Send Slack notification
+      uses: 8398a7/action-slack@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+ 
 
  
