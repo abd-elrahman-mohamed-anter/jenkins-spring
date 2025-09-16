@@ -87,8 +87,16 @@ The project passed the **Quality Gate** with ratings:
 | Hotspots Reviewed    | 100%  | A      |
 | Duplications         | 0.0%  | A      |
 
+**Explanation of Metrics:**
 
+- **Security (0 – A):** No known security vulnerabilities detected. The code is safe from common security risks.  
+- **Reliability (0 – A):** The code is stable with no issues that could cause runtime failures.  
+- **Maintainability (28 – A):** The code is easy to maintain and extend, with only minor potential improvements.  
+- **Hotspots Reviewed (100% – A):** All critical code areas have been reviewed, ensuring risk areas are addressed.  
+- **Coverage (0.0% – Needs Improvement):** No unit tests have been executed yet. Adding tests will improve code coverage and confidence.  
+- **Duplications (0.0% – A):** No duplicated code found, which keeps the codebase clean and maintainable.
 
+  
 ![SonarCloud Results](sonarcloud1.png)
 
 ---
