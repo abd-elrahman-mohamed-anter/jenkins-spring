@@ -28,6 +28,21 @@ It contains a job `build-analyze-deploy` that performs the following steps:
 
 ---
 
+## 🔐 Repository Secrets
+
+This project uses GitHub Actions to automate CI/CD. To securely connect with external services, the following **repository secrets** are configured:
+
+| Name              | Description |
+|------------------|-------------|
+| `DOCKER_USERNAME` | Docker Hub username |
+| `DOCKER_PASSWORD` | Docker Hub access token with read & write permissions |
+| `SONAR_TOKEN`     | SonarCloud token used to authenticate and analyze the project |
+| `SONAR_HOST_URL`  | URL of the SonarCloud server (`https://sonarcloud.io`) |
+
+> **Note:** Secrets are stored in GitHub repository settings under **Settings → Secrets and variables → Actions** and are **not visible in the repository or logs**.
+
+---
+
 ## 📷 Screenshots
 
 ### 1️⃣ GitHub Actions Workflow  
@@ -81,13 +96,6 @@ With this setup:
 
 ---
 
-## 🔮 Next Steps (Optional Enhancements)
-
-- Add automated unit and integration tests.  
-- Deploy the Docker image automatically to Kubernetes, AWS, or another cloud provider.  
-
----
-
 ## 🐳 Run the Docker Image
 
 To pull and run the image locally:  
@@ -98,10 +106,4 @@ docker pull abdoomohamed/jenkins-spring:latest
 
 # Run the container
 docker run -p 8080:8080 abdoomohamed/jenkins-spring:latest
-```
-## 📚 References
-- [SonarCloud Docs](https://docs.sonarcloud.io/)
-- [GitHub Actions Docs](https://docs.github.com/en/actions)
-- [Docker Hub Docs](https://docs.docker.com/docker-hub/)
-
 
