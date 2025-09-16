@@ -33,7 +33,7 @@ It contains a job `build-analyze-deploy` that performs the following steps:
 ### 1️⃣ GitHub Actions Workflow  
 Successful runs of the CI/CD pipeline:  
 
-![GitHub Actions Workflow](1.jpg)
+![GitHub Actions Workflow](1.png)
 
 ---
 
