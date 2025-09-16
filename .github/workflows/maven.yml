@@ -37,13 +37,13 @@ jobs:
       - name: Build project
         run: mvn clean package -DskipTests
 
-      # 5️⃣ تحليل الكود بـ SonarQube
-      - name: Run SonarQube analysis
-        run: |
-          mvn sonar:sonar \
-            -Dsonar.projectKey=spring-petclinic \
-            -Dsonar.host.url=http://your-sonarqube-server:9000 \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      # 5️⃣ تحليل الكود بـ SonarCloud
+      - name: Run SonarCloud analysis
+        run: mvn sonar:sonar \
+             -Dsonar.projectKey=spring-githubactions \
+             -Dsonar.organization=your-org-key \
+             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       # 6️⃣ تسجيل الدخول في Docker Hub
       - name: Log in to Docker Hub
@@ -59,4 +59,3 @@ jobs:
       # 8️⃣ رفع الصورة
       - name: Push Docker image
         run: docker push $DOCKER_HUB_REPO:latest
-
